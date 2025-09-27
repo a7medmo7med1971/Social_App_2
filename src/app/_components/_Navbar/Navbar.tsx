@@ -13,6 +13,10 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import { Box, Button, IconButton, Menu, MenuItem, Typography, Stack } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { dispatchType } from "@/redex/store";
+import { useRouter } from "next/navigation";
+import { clearData } from "@/redex/authSlice";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -54,6 +58,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Navbar() {
+  const dispatch = useDispatch<dispatchType>();
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -82,6 +88,7 @@ export default function Navbar() {
 
   const handleLogin = () => setLoggedIn(true);
   const handleLogout = () => setLoggedIn(false);
+
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -287,7 +294,11 @@ export default function Navbar() {
                 </Button>
               </Link>
             ) : (
-              <Button onClick={handleLogout} color="inherit" variant="contained">
+              <Button onClick={() =>{
+                dispatch(clearData())
+                router.push("/register");
+
+              } } color="inherit" variant="contained">
                 Logout
               </Button>
             )}

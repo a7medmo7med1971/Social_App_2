@@ -77,6 +77,7 @@ const authinication = createSlice({
       .addCase(handelLogin.rejected, (state, action) => {
         state.loading = false;             // نوقف التحميل
         state.error = action.payload as string; // نخزن رسالة الخطأ
+        console.log( state.error)
       });
   },
 });
