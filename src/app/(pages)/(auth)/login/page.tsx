@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function Login() {
@@ -54,21 +54,25 @@ export default function Login() {
     },
     onSubmit: async (values) => {
       await dispatch(handelLogin(values));
-      if (error) {
-        toast.error(error);
-      }
-      if (token) {
-        toast.success("Login successful ");
-        router.push("/");
-      }
     },
-    validationSchema: validationSchema,
+    validationSchema,
   });
+  // 🟢 تابع الـ token و error
+useEffect(() => {
+  if (error) {
+    toast.error(error);
+  }
+  if (token) {
+    toast.success("Login successful");
+    router.push("/");
+  }
+}, [error, token, router]);
+
 
   return (
     <Box
       sx={{
-        minHeight: "90vh",
+        minHeight: "93vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -176,7 +180,7 @@ export default function Login() {
                 background: "#1877f2",
               },
             }}
-            disabled={loading || !loginFormik.isValid}
+            // disabled={loading || !loginFormik.isValid}
           >
             {loading ? (
               <>

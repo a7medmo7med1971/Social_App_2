@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -53,7 +53,11 @@ const authinication = createSlice({
    Object.assign(state, initialState);
    Cookies.remove("token");
    
-   }
+   },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -84,5 +88,6 @@ const authinication = createSlice({
 
 // 5️⃣ نطلع الأكشن (clearData) والـ reducer عشان نستخدمهم برا
 export const { clearData } = authinication.actions;
+export const { setToken } = authinication.actions;
 export const authiniCation = authinication.reducer;
 

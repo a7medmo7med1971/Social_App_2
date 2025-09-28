@@ -12,12 +12,21 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { Box, Button, IconButton, Menu, MenuItem, Typography, Stack } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { dispatchType } from "@/redex/store";
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Stack,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { dispatchType, Statetype } from "@/redex/store";
 import { useRouter } from "next/navigation";
 import { clearData } from "@/redex/authSlice";
 
+// ⬇️ Search bar styles
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -60,11 +69,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Navbar() {
   const dispatch = useDispatch<dispatchType>();
   const router = useRouter();
+
+  // 🟢 جيب حالة تسجيل الدخول من Redux
+  const { token } = useSelector((state: Statetype) => state.authiniCation);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
-
-  const [loggedIn, setLoggedIn] = React.useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -86,9 +97,10 @@ export default function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  const handleLogin = () => setLoggedIn(true);
-  const handleLogout = () => setLoggedIn(false);
-
+  const handleLogout = () => {
+    dispatch(clearData());
+    router.push("/login");
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -109,7 +121,7 @@ export default function Navbar() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      {loggedIn && (
+      {token && (
         <MenuItem
           onClick={() => {
             handleLogout();
@@ -124,99 +136,89 @@ export default function Navbar() {
 
   const mobileMenuId = "primary-search-account-menu-mobile";
   const renderMobileMenu = (
-<Menu
-  anchorEl={mobileMoreAnchorEl}
-  anchorOrigin={{
-    vertical: "top",
-    horizontal: "right",
-  }}
-  id={mobileMenuId}
-  keepMounted
-  transformOrigin={{
-    vertical: "top",
-    horizontal: "right",
-  }}
-  open={isMobileMenuOpen}
-  onClose={handleMobileMenuClose}
-  PaperProps={{
-    sx: {
-      minWidth: 250,
-      p: 1,
-    },
-  }}
->
-  <MenuItem>
-    <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-      <Badge badgeContent={4} color="error">
-        <MailIcon />
-      </Badge>
-    </IconButton>
-    <Typography variant="body1" sx={{ ml: 1 }}>
-      Messages
-    </Typography>
-  </MenuItem>
-
-  <MenuItem>
-    <IconButton
-      size="large"
-      aria-label="show 17 new notifications"
-      color="inherit"
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+      PaperProps={{
+        sx: {
+          minWidth: 250,
+          p: 1,
+        },
+      }}
     >
-      <Badge badgeContent={17} color="error">
-        <NotificationsIcon />
-      </Badge>
-    </IconButton>
-    <Typography variant="body1" sx={{ ml: 1 }}>
-      Notifications
-    </Typography>
-  </MenuItem>
+      <MenuItem>
+        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={4} color="error">
+            <MailIcon />
+          </Badge>
+        </IconButton>
+        <Typography variant="body1" sx={{ ml: 1 }}>
+          Messages
+        </Typography>
+      </MenuItem>
 
-  <MenuItem onClick={handleProfileMenuOpen}>
-    <IconButton
-      size="large"
-      aria-label="account of current user"
-      aria-controls="primary-search-account-menu"
-      aria-haspopup="true"
-      color="inherit"
-    >
-      <AccountCircle />
-    </IconButton>
-    <Typography variant="body1" sx={{ ml: 1 }}>
-      Profile
-    </Typography>
-  </MenuItem>
-
-  <MenuItem>
-    <Stack direction="column" spacing={1} sx={{ width: "100%" }}>
-      {!loggedIn ? (
-        <Link href="/login" passHref>
-          <Button
-            onClick={handleLogin}
-            variant="contained"
-            color="primary"
-            fullWidth
-          >
-            Login
-          </Button>
-        </Link>
-      ) : (
-        <Button
-          onClick={handleLogout}
-          variant="contained"
-          color="primary"
-          fullWidth
+      <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="show 17 new notifications"
+          color="inherit"
         >
-          Logout
-        </Button>
-      )}
-      <Link href="/register" passHref>
-        <Button variant="outlined" color="inherit" fullWidth>
-          Register
-        </Button>
-      </Link>
-    </Stack>
-  </MenuItem>
-</Menu>
+          <Badge badgeContent={17} color="error">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <Typography variant="body1" sx={{ ml: 1 }}>
+          Notifications
+        </Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <Typography variant="body1" sx={{ ml: 1 }}>
+          Profile
+        </Typography>
+      </MenuItem>
+
+      <MenuItem>
+        <Stack direction="column" spacing={1} sx={{ width: "100%" }}>
+          {!token ? (
+            <Link href="/login" passHref>
+              <Button variant="contained" color="primary" fullWidth>
+                Login
+              </Button>
+            </Link>
+          ) : (
+            <Button onClick={handleLogout} variant="contained" color="primary" fullWidth>
+              Logout
+            </Button>
+          )}
+          <Link href="/register" passHref>
+            <Button variant="outlined" color="inherit" fullWidth>
+              Register
+            </Button>
+          </Link>
+        </Stack>
+      </MenuItem>
+    </Menu>
   );
 
   return (
@@ -238,7 +240,7 @@ export default function Navbar() {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-           Social App
+            Social App
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -287,18 +289,14 @@ export default function Navbar() {
                 Register
               </Button>
             </Link>
-            {!loggedIn ? (
+            {!token ? (
               <Link href="/login" passHref>
-                <Button onClick={handleLogin} color="inherit" variant="contained">
+                <Button color="inherit" variant="contained">
                   Login
                 </Button>
               </Link>
             ) : (
-              <Button onClick={() =>{
-                dispatch(clearData())
-                router.push("/register");
-
-              } } color="inherit" variant="contained">
+              <Button onClick={handleLogout} color="inherit" variant="contained">
                 Logout
               </Button>
             )}

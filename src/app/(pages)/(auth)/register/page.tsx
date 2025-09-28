@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Paper,
@@ -83,6 +83,10 @@ export default function Register() {
     validationSchema, // ✅ ربط الـ Schema هنا
     onSubmit: (values) => {
       dispatch(handelSignup(values));
+
+    },
+  });
+  useEffect(() => {
       if (error) {
         toast.error(error);
       }
@@ -90,13 +94,12 @@ export default function Register() {
         toast.success(successMessage);
         router.push("/login");
       }
-    },
-  });
+}, [error, successMessage, router]);
 
   return (
     <Box
       sx={{
-        minHeight: "90vh",
+        minHeight: "93vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
