@@ -57,13 +57,46 @@ export default function Login() {
   });
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-    if (token) {
-      toast.success("Login successful");
-      router.push("/");
-    }
+if (error) {
+  toast.error(error, {
+    duration: 4000,
+    position: 'bottom-center',
+    style: {
+      background: '#000',
+      color: '#fff',
+      padding: '12px 20px',
+      borderRadius: '12px',
+      fontSize: '14px',
+      fontWeight: '500',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    },
+    iconTheme: {
+      primary: '#ff4444',
+      secondary: '#000',
+    },
+  });
+}
+
+if (token) {
+  toast.success("Login successful", {
+    duration: 3000,
+    position: 'bottom-center',
+    style: {
+      background: '#000',
+      color: '#fff',
+      padding: '12px 20px',
+      borderRadius: '12px',
+      fontSize: '14px',
+      fontWeight: '500',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    },
+    iconTheme: {
+      primary: '#fff',
+      secondary: '#000',
+    },
+  });
+  router.push("/");
+}
   }, [error, token, router]);
 
   return (
@@ -73,7 +106,7 @@ export default function Login() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        bgcolor: "#ffffff",
+        bgcolor: "#0a0a0a",
         px: 2,
       }}
     >
@@ -112,7 +145,7 @@ export default function Login() {
           sx={{
             fontWeight: 700,
             mb: 1,
-            color: "#000",
+            color: "white",
             fontSize: "1.75rem",
           }}
         >
@@ -250,30 +283,32 @@ export default function Login() {
             fullWidth
             disabled={loading}
             sx={{
-              mt: 2,
-              py: 1.5,
-              bgcolor: "#000",
-              color: "#fff",
-              borderRadius: 3,
-              fontSize: "0.95rem",
-              fontWeight: 600,
+              mt: 3,
+              height: 48,
+              borderRadius: "12px",
+              background: "#ffffff",
+              color: "#000000",
+              fontWeight: "700",
+              fontSize: "15px",
               textTransform: "none",
+              transition: "all 0.2s ease",
               "&:hover": {
-                bgcolor: "#262626",
+                background: "#f0f0f0",
+                transform: "translateY(-1px)",
               },
               "&:disabled": {
-                bgcolor: "#e5e5e5",
-                color: "#a3a3a3",
+                background: "#333333",
+                color: "#777777",
               },
             }}
           >
             {loading ? (
               <>
-                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                <CircularProgress size={20} sx={{ mr: 1, color: "#777777" }} />
                 Logging in...
               </>
             ) : (
-              "Log in"
+            "Log in"
             )}
           </Button>
 
@@ -313,7 +348,7 @@ export default function Login() {
                 href="/register"
                 style={{
                   textDecoration: "none",
-                  color: "#000",
+                  color: "white",
                   fontWeight: 600,
                 }}
               >

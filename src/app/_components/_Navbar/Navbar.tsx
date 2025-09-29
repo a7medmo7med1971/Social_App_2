@@ -53,7 +53,7 @@ export default function ThreadsNavbar() {
   return (
     <>
       {/* Top Header - Desktop & Mobile */}
-      <Box
+      {/* <Box
         sx={{
           position: "sticky",
           top: 0,
@@ -83,7 +83,7 @@ export default function ThreadsNavbar() {
             Home
           </Typography>
         </Box>
-      </Box>
+      </Box> */}
 
       {/* Sidebar - Desktop Only */}
       <Box
@@ -98,7 +98,7 @@ export default function ThreadsNavbar() {
           alignItems: "center",
           bgcolor: "#ffffff",
           borderRight: "1px solid #e5e5e5",
-          py: 3,
+          py: 1,
           zIndex: 1200,
         }}
       >
@@ -324,7 +324,7 @@ export default function ThreadsNavbar() {
         )}
       </Menu>
 
-      {/* Mobile Bottom Navigation */}
+{/* Mobile Bottom Navigation */}
       <Box
         sx={{
           display: { xs: "flex", md: "none" },
@@ -376,13 +376,14 @@ export default function ThreadsNavbar() {
           <Favorite sx={{ fontSize: 28 }} />
         </IconButton>
         <IconButton
+          onClick={handleMenuOpen}
           sx={{
             color: "#000",
             p: 1.5,
             "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
           }}
         >
-          <AccountCircle sx={{ fontSize: 28 }} />
+          <MenuIcon sx={{ fontSize: 28 }} />
         </IconButton>
       </Box>
 
