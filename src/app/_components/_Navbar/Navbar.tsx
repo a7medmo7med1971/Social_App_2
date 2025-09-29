@@ -52,7 +52,38 @@ export default function ThreadsNavbar() {
 
   return (
     <>
-
+      {/* Top Header - Desktop & Mobile */}
+      <Box
+        sx={{
+          position: "sticky",
+          top: 0,
+          bgcolor: "#ffffff",
+          borderBottom: "1px solid #e5e5e5",
+          zIndex: 1100,
+          display: { xs: "block", md: "none" },
+        }}
+      >
+        <Box
+          sx={{
+            height: 56,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            px: 2,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "0.5px",
+            }}
+          >
+            Home
+          </Typography>
+        </Box>
+      </Box>
 
       {/* Sidebar - Desktop Only */}
       <Box
@@ -238,7 +269,7 @@ export default function ThreadsNavbar() {
         </MenuItem>
         <Divider sx={{ my: 1 }} />
         {!token ? (
-          <>
+          <Box>
             <Link href="/login" passHref style={{ textDecoration: "none" }}>
               <MenuItem
                 onClick={handleMenuClose}
@@ -275,7 +306,7 @@ export default function ThreadsNavbar() {
                 </Typography>
               </MenuItem>
             </Link>
-          </>
+          </Box>
         ) : (
           <MenuItem
             onClick={handleLogout}
@@ -353,9 +384,6 @@ export default function ThreadsNavbar() {
         >
           <AccountCircle sx={{ fontSize: 28 }} />
         </IconButton>
-          
-
-
       </Box>
 
       {/* Add padding to main content to account for sidebar */}
