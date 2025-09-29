@@ -1,322 +1,371 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
-  Button,
+  Drawer,
   IconButton,
   Menu,
   MenuItem,
   Typography,
-  Stack,
+  Divider,
+  Avatar,
 } from "@mui/material";
+import {
+  Home,
+  Search,
+  Edit,
+  Favorite,
+  AccountCircle,
+  Menu as MenuIcon,
+  Settings,
+  Bookmark,
+  ThumbUp,
+  Logout,
+  Login,
+} from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { dispatchType, Statetype } from "@/redex/store";
 import { useRouter } from "next/navigation";
 import { clearData } from "@/redex/authSlice";
 
-// ⬇️ Search bar styles
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-
-export default function Navbar() {
+export default function ThreadsNavbar() {
   const dispatch = useDispatch<dispatchType>();
   const router = useRouter();
-
-  // 🟢 جيب حالة تسجيل الدخول من Redux
   const { token } = useSelector((state: Statetype) => state.authiniCation);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
 
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setMobileMoreAnchorEl(event.currentTarget);
   };
 
   const handleLogout = () => {
     dispatch(clearData());
     router.push("/login");
+    handleMenuClose();
   };
 
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      {token && (
-        <MenuItem
-          onClick={() => {
-            handleLogout();
-            handleMenuClose();
-          }}
-        >
-          Logout
-        </MenuItem>
-      )}
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      PaperProps={{
-        sx: {
-          minWidth: 250,
-          p: 1,
-        },
-      }}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <Typography variant="body1" sx={{ ml: 1 }}>
-          Messages
-        </Typography>
-      </MenuItem>
-
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <Typography variant="body1" sx={{ ml: 1 }}>
-          Notifications
-        </Typography>
-      </MenuItem>
-
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <Typography variant="body1" sx={{ ml: 1 }}>
-          Profile
-        </Typography>
-      </MenuItem>
-
-      <MenuItem>
-        <Stack direction="column" spacing={1} sx={{ width: "100%" }}>
-          {!token ? (
-            <Link href="/login" passHref>
-              <Button variant="contained" color="primary" fullWidth>
-                Login
-              </Button>
-            </Link>
-          ) : (
-            <Button onClick={handleLogout} variant="contained" color="primary" fullWidth>
-              Logout
-            </Button>
-          )}
-          <Link href="/register" passHref>
-            <Button variant="outlined" color="inherit" fullWidth>
-              Register
-            </Button>
-          </Link>
-        </Stack>
-      </MenuItem>
-    </Menu>
-  );
-
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar sx={{ gap: 1 }}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 1 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            Social App
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
-          <Box sx={{ flexGrow: 1 }} />
+    <>
+
+
+      {/* Sidebar - Desktop Only */}
+      <Box
+        sx={{
+          display: { xs: "none", md: "flex" },
+          position: "fixed",
+          left: 0,
+          top: 0,
+          width: 100,
+          height: "100vh",
+          flexDirection: "column",
+          alignItems: "center",
+          bgcolor: "#ffffff",
+          borderRight: "1px solid #e5e5e5",
+          py: 3,
+          zIndex: 1200,
+        }}
+      >
+        {/* Logo */}
+        <Link href="/" passHref style={{ textDecoration: "none" }}>
           <Box
             sx={{
-              display: { xs: "none", md: "flex" },
+              mb: 4,
+              cursor: "pointer",
+              display: "flex",
               alignItems: "center",
-              gap: 1,
+              justifyContent: "center",
             }}
           >
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
+            <Box
+              component="svg"
+              width="36"
+              height="36"
+              viewBox="0 0 192 192"
+              sx={{ color: "#000" }}
             >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Link href="/register" passHref>
-              <Button color="inherit" variant="outlined">
-                Register
-              </Button>
-            </Link>
-            {!token ? (
-              <Link href="/login" passHref>
-                <Button color="inherit" variant="contained">
+              <path
+                fill="currentColor"
+                d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.788C154.894 45.8136 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 27.974C147.036 9.60668 125.202 0.195148 97.0695 0H96.9569C68.8816 0.19447 47.2921 9.6418 32.7883 28.0793C19.8819 44.4864 13.2244 67.3157 13.0007 95.9325L13 96L13.0007 96.0675C13.2244 124.684 19.8819 147.514 32.7883 163.921C47.2921 182.358 68.8816 191.806 96.9569 192H97.0695C122.03 191.827 139.624 185.292 154.118 170.811C173.081 151.866 172.51 128.119 166.26 113.541C161.776 103.087 153.227 94.5962 141.537 88.9883Z"
+              />
+            </Box>
+          </Box>
+        </Link>
+
+        {/* Navigation Icons */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            flex: 1,
+          }}
+        >
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <Home sx={{ fontSize: 28 }} />
+          </IconButton>
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <Search sx={{ fontSize: 28 }} />
+          </IconButton>
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <Edit sx={{ fontSize: 28 }} />
+          </IconButton>
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <Favorite sx={{ fontSize: 28 }} />
+          </IconButton>
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <AccountCircle sx={{ fontSize: 28 }} />
+          </IconButton>
+        </Box>
+
+        {/* Menu Button at Bottom */}
+        <IconButton
+          onClick={handleMenuOpen}
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+            borderRadius: 2,
+            mt: "auto",
+          }}
+        >
+          <MenuIcon sx={{ fontSize: 28 }} />
+        </IconButton>
+      </Box>
+
+      {/* Menu Dropdown */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        PaperProps={{
+          sx: {
+            mb: 2,
+            ml: 1,
+            minWidth: 240,
+            borderRadius: 3,
+            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            border: "1px solid #e5e5e5",
+          },
+        }}
+      >
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            py: 1.5,
+            px: 2,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+          }}
+        >
+          <Settings sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+          <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+            Settings
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            py: 1.5,
+            px: 2,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+          }}
+        >
+          <Bookmark sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+          <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+            Saved
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            py: 1.5,
+            px: 2,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+          }}
+        >
+          <ThumbUp sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+          <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+            Your likes
+          </Typography>
+        </MenuItem>
+        <Divider sx={{ my: 1 }} />
+        {!token ? (
+          <>
+            <Link href="/login" passHref style={{ textDecoration: "none" }}>
+              <MenuItem
+                onClick={handleMenuClose}
+                sx={{
+                  py: 1.5,
+                  px: 2,
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                }}
+              >
+                <Login sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#000", fontSize: "0.95rem" }}
+                >
                   Login
-                </Button>
-              </Link>
-            ) : (
-              <Button onClick={handleLogout} color="inherit" variant="contained">
-                Logout
-              </Button>
-            )}
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
+                </Typography>
+              </MenuItem>
+            </Link>
+            <Link href="/register" passHref style={{ textDecoration: "none" }}>
+              <MenuItem
+                onClick={handleMenuClose}
+                sx={{
+                  py: 1.5,
+                  px: 2,
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                }}
+              >
+                <AccountCircle sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#000", fontSize: "0.95rem" }}
+                >
+                  Register
+                </Typography>
+              </MenuItem>
+            </Link>
+          </>
+        ) : (
+          <MenuItem
+            onClick={handleLogout}
+            sx={{
+              py: 1.5,
+              px: 2,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+            }}
+          >
+            <Logout sx={{ mr: 2, fontSize: 22, color: "#666" }} />
+            <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+              Logout
+            </Typography>
+          </MenuItem>
+        )}
+      </Menu>
+
+      {/* Mobile Bottom Navigation */}
+      <Box
+        sx={{
+          display: { xs: "flex", md: "none" },
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          bgcolor: "#ffffff",
+          borderTop: "1px solid #e5e5e5",
+          justifyContent: "space-around",
+          py: 1,
+          zIndex: 1100,
+        }}
+      >
+        <IconButton
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+          }}
+        >
+          <Home sx={{ fontSize: 28 }} />
+        </IconButton>
+        <IconButton
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+          }}
+        >
+          <Search sx={{ fontSize: 28 }} />
+        </IconButton>
+        <IconButton
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+          }}
+        >
+          <Edit sx={{ fontSize: 28 }} />
+        </IconButton>
+        <IconButton
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+          }}
+        >
+          <Favorite sx={{ fontSize: 28 }} />
+        </IconButton>
+        <IconButton
+          sx={{
+            color: "#000",
+            p: 1.5,
+            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+          }}
+        >
+          <AccountCircle sx={{ fontSize: 28 }} />
+        </IconButton>
+          
+
+
+      </Box>
+
+      {/* Add padding to main content to account for sidebar */}
+      <style jsx global>{`
+        @media (min-width: 900px) {
+          body {
+            padding-left: 100px;
+          }
+        }
+      `}</style>
+    </>
   );
 }
