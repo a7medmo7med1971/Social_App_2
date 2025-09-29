@@ -94,14 +94,47 @@ export default function Register() {
   });
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-    if (successMessage) {
-      toast.success(successMessage);
-      router.push("/login");
-    }
-  }, [error, successMessage, router]);
+if (error) {
+  toast.error(error, {
+    duration: 4000,
+    position: 'bottom-center',
+    style: {
+      background: '#000',
+      color: '#fff',
+      padding: '12px 20px',
+      borderRadius: '12px',
+      fontSize: '14px',
+      fontWeight: '500',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    },
+    iconTheme: {
+      primary: '#ff4444',
+      secondary: '#000',
+    },
+  });
+  if (successMessage) {
+  toast.success("singup successful", {
+    duration: 3000,
+    position: 'bottom-center',
+    style: {
+      background: '#000',
+      color: '#fff',
+      padding: '12px 20px',
+      borderRadius: '12px',
+      fontSize: '14px',
+      fontWeight: '500',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    },
+    iconTheme: {
+      primary: '#fff',
+      secondary: '#000',
+    },
+  });
+  router.push("/login");
+}
+}
+}, [error, successMessage, router]);
+
 
   return (
     <Box
@@ -396,20 +429,20 @@ export default function Register() {
                   InputProps: {
                     startAdornment: (
                       <InputAdornment position="start">
-                        <CalendarToday sx={{ color: "#777777", fontSize: 20 }} />
+                        <CalendarToday sx={{ color: "#ffffff", fontSize: 20 }} />
                       </InputAdornment>
                     ),
                   },
                   sx: {
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "12px",
-                      backgroundColor: "#262626",
+                      backgroundColor: "#ffffff",
                       border: "none",
                       "& fieldset": {
-                        border: "1px solid #3a3a3a",
+                        border: "1px solid #ffffff",
                       },
                       "&:hover fieldset": {
-                        borderColor: "#555555",
+                        borderColor: "#ffffff",
                       },
                       "&.Mui-focused fieldset": {
                         borderColor: "#ffffff",
