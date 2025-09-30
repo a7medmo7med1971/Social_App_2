@@ -1,6 +1,8 @@
 // postsSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 
 /* ----------  واجهات البيانات ---------- */
 
@@ -35,11 +37,13 @@ export interface IPostsResponse {
 }
 
 /* ----------  الـ Thunk ---------- */
-
-export const getAllPostes = createAsyncThunk<IPostsResponse, string | undefined>(
+const token =  Cookies.get('token');
+export const getAllPostes = createAsyncThunk<IPostsResponse, number | undefined >(
   "getAllPostes/getAllPostes",
   async (limit) => {
-    const res = await axios.get(`https://linked-posts.routemisr.com/posts?${limit?limit:50}`);
+    const res = await axios.get(`https://linked-posts.routemisr.com/posts?limit=${limit ?? 50}`,{headers:{
+      token:token
+    }});
     return res.data; // هنرجع البيانات للـ extraReducers
   }
 );
@@ -70,6 +74,7 @@ export const AllPostes = createSlice({
       .addCase(getAllPostes.fulfilled, (state, action) => {
         state.loading = false;
         state.posts = action.payload.posts; // نخزن البوستات
+        console.log(action.payload.posts);
       })
       .addCase(getAllPostes.rejected, (state) => {
         state.loading = false;
