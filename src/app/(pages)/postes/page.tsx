@@ -9,8 +9,6 @@ import {
   Divider,
   Menu,
   MenuItem,
-  AppBar,
-  Toolbar,
 } from "@mui/material";
 import {
   FavoriteBorder,
@@ -23,20 +21,23 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { dispatchType, Statetype } from "@/redex/store";
 import { getAllPostes } from "@/redex/getAllPostes";
+import { useRouter } from "next/navigation";
 
 const ThreadsClone: React.FC = () => {
+  const router=useRouter();
   const dispatch = useDispatch<dispatchType>();
   const { posts } = useSelector((state: Statetype) => state.allPostesReducer);
-
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl({ ...anchorEl, [postId]: event.currentTarget });
   };
-
   const handleMenuClose = (postId: string) => {
     setAnchorEl({ ...anchorEl, [postId]: null });
   };
+  const handleProfile = (id: string) => {
+      router.push(`/profile/${id}`)
+  };
+
 
   useEffect(() => {
     dispatch(getAllPostes(50));
@@ -59,259 +60,334 @@ const ThreadsClone: React.FC = () => {
   return (
     <Box
       sx={{
-        bgcolor: "#ffffff",
+        bgcolor: "#FAFAFA",
         minHeight: "100vh",
-        pt: { xs: 7, md: 0 },
-        pb: { xs: 8, md: 0 },
+        pt: { xs: 0, md: 0 },
+        pb: { xs: 8, md: 2 },
+        
       }}
     >
-            {/* AppBar */}
-      <AppBar
-        position="fixed"
-        elevation={0}
+      {/* Top Header - Home */}
+      <Box
         sx={{
-          bgcolor: "#fff",
-          borderBottom: "1px solid #e0e0e0",
-          color: "#000",
+          position: "sticky",
+          top: 0,
+          bgcolor: "rgba(0,0,0,0.6)",
+        backdropFilter: "blur(12px)",
+        borderTop: "20px",
+          zIndex: 100,
+          display: "flex",
+          justifyContent: "center",
+          py: 2,
         }}
       >
-        <Toolbar sx={{ justifyContent: "center" }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontWeight: 700,
-              fontSize: "1.1rem",
-              letterSpacing: "0.5px",
-            }}
-          >
-            Threads Clone
-          </Typography>
-        </Toolbar>
-      </AppBar>
+        <Typography
+          sx={{
+            fontWeight: 900,
+            fontSize: "16px",
+            color: "white",
+            letterSpacing: "-0.2px",
+          }}
+        >
+          Home
+        </Typography>
+      </Box>
+
       <Container
         maxWidth="sm"
         disableGutters
         sx={{
-          maxWidth: { xs: "100%", sm: 600 },
+          maxWidth: { xs: "100%", sm: 630 },
+          bgcolor: "#ffffff",
+           
+               borderRadius: "20px",
+               marginTop:"15px",
         }}
       >
         {posts?.map((post, index) => (
-          <React.Fragment key={post._id}>
-            <Box sx={{ px: 2, py: 3 }}>
-              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
-                {/* Avatar */}
-                <Avatar
-                  src={post.user.photo}
-                  alt={post.user.name}
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    fontSize: "0.875rem",
-                    fontWeight: 600,
-                    bgcolor: "#000",
-                  }}
-                >
-                  {post.user.name?.charAt(0).toUpperCase()}
-                </Avatar>
-
-                {/* Content */}
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  {/* Header */}
+          <Box key={post._id}>
+            <Box
+              sx={{
+                bgcolor: "#ffffff",
+                borderRadius: "20px",
+                transition: "background-color 0.15s ease",
+                cursor: "pointer",
+                "&:hover": {
+                  bgcolor: "#fafafa",
+                },
+              }}
+            >
+              <Box sx={{ px: 2, py: 2.5 }}>
+                <Box sx={{ display: "flex", gap: 1.5 }}>
+                  {/* Left side - Avatar */}
                   <Box
                     sx={{
                       display: "flex",
+                      flexDirection: "column",
                       alignItems: "center",
-                      justifyContent: "space-between",
-                      mb: 0.5,
                     }}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: "15px",
-                          color: "#000",
-                        }}
-                      >
-                        {post.user.name}
-                      </Typography>
-                      <Verified sx={{ fontSize: 14, color: "#0095f6" }} />
+                    <Avatar
+                      src={post.user.photo}
+                      alt={post.user.name}
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        bgcolor: "#e4e6eb",
+                        color: "#000",
+                        cursor: "pointer",
+                        
+                      }
+                    }
+                 onClick={() => handleProfile(post.user._id)}
+                    >
+                      {post.user.name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </Box>
+
+                  {/* Right side - Content */}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    {/* Header */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        justifyContent: "space-between",
+                        mb: 0.5,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                        <Typography
+                          sx={{
+                            fontWeight: 700,
+                            fontSize: "15px",
+                            color: "#000000",
+                            cursor: "pointer",
+                            "&:hover": {
+                              textDecoration: "underline",
+                            },
+                          }}
+                        >
+                          {post.user.name}
+                        </Typography>
+                        <Verified sx={{ fontSize: 16, color: "#0095f6" }} />
+                      </Box>
+
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Typography
+                          sx={{
+                            color: "#999999",
+                            fontSize: "15px",
+                            fontWeight: 400,
+                          }}
+                        >
+                          {formatDate(post.createdAt)}
+                        </Typography>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMenuOpen(e, post._id);
+                          }}
+                          sx={{
+                            color: "#999999",
+                            p: 0.5,
+                            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+                          }}
+                        >
+                          <MoreHoriz sx={{ fontSize: 20 }} />
+                        </IconButton>
+                      </Box>
                     </Box>
 
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <Typography
+                    {/* Post Text */}
+                    <Typography
+                      sx={{
+                        fontSize: "15px",
+                        lineHeight: 1.4,
+                        color: "#000000",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                        mb: post.image ? 1.25 : 1.5,
+                      }}
+                    >
+                      {post.body}
+                    </Typography>
+
+                    {/* Post Image */}
+                    {post.image && (
+                      <Box
+                        component="img"
+                        src={post.image}
+                        alt="Post"
                         sx={{
-                          color: "#999",
-                          fontSize: "15px",
+                          width: "100%",
+                          maxHeight: 500,
+                          objectFit: "cover",
+                          borderRadius: 2,
+                          border: "0.5px solid #dbdbdb",
+                          mb: 1.5,
                         }}
-                      >
-                        {formatDate(post.createdAt)}
-                      </Typography>
+                      />
+                    )}
+
+                    {/* Action Buttons */}
+                    <Box sx={{ display: "flex", gap: 0.25, mb: 1.25 }}>
                       <IconButton
                         size="small"
-                        onClick={(e) => handleMenuOpen(e, post._id)}
+                        onClick={(e) => e.stopPropagation()}
                         sx={{
-                          color: "#999",
-                          p: 0.5,
-                          "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+                          color: "#000000",
+                          p: 0.75,
+                          "&:hover": { 
+                            bgcolor: "rgba(0,0,0,0.05)",
+                          },
+                          transition: "all 0.2s ease",
                         }}
                       >
-                        <MoreHoriz sx={{ fontSize: 20 }} />
+                        <FavoriteBorder sx={{ fontSize: 20 }} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => e.stopPropagation()}
+                        sx={{
+                          color: "#000000",
+                          p: 0.75,
+                          "&:hover": { 
+                            bgcolor: "rgba(0,0,0,0.05)",
+                          },
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <ChatBubbleOutline sx={{ fontSize: 20 }} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => e.stopPropagation()}
+                        sx={{
+                          color: "#000000",
+                          p: 0.75,
+                          "&:hover": { 
+                            bgcolor: "rgba(0,0,0,0.05)",
+                          },
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <Repeat sx={{ fontSize: 21 }} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => e.stopPropagation()}
+                        sx={{
+                          color: "#000000",
+                          p: 0.75,
+                          "&:hover": { 
+                            bgcolor: "rgba(0,0,0,0.05)",
+                          },
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <Send sx={{ fontSize: 20 }} />
                       </IconButton>
                     </Box>
+
+                    {/* Stats */}
+                    <Typography
+                      sx={{
+                        color: "#999999",
+                        fontSize: "15px",
+                        fontWeight: 400,
+                      }}
+                    >
+                      {Math.floor(Math.random() * 500)} replies · {Math.floor(Math.random() * 2000)} likes
+                    </Typography>
                   </Box>
-
-                  {/* Post Text */}
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      lineHeight: 1.4,
-                      color: "#000",
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                      mb: post.image ? 1.5 : 2,
-                    }}
-                  >
-                    {post.body}
-                  </Typography>
-
-                  {/* Post Image */}
-                  {post.image && (
-                    <Box
-                      component="img"
-                      src={post.image}
-                      alt="Post"
-                      sx={{
-                        width: "100%",
-                        maxHeight: 500,
-                        objectFit: "cover",
-                        borderRadius: 2,
-                        border: "0.5px solid #dbdbdb",
-                        mb: 2,
-                      }}
-                    />
-                  )}
-
-                  {/* Action Buttons */}
-                  <Box sx={{ display: "flex", gap: 0.5, mb: 1.5 }}>
-                    <IconButton
-                      size="small"
-                      sx={{
-                        color: "#000",
-                        p: 1,
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                      }}
-                    >
-                      <FavoriteBorder sx={{ fontSize: 20 }} />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{
-                        color: "#000",
-                        p: 1,
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                      }}
-                    >
-                      <ChatBubbleOutline sx={{ fontSize: 19 }} />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{
-                        color: "#000",
-                        p: 1,
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                      }}
-                    >
-                      <Repeat sx={{ fontSize: 21 }} />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{
-                        color: "#000",
-                        p: 1,
-                        "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                      }}
-                    >
-                      <Send sx={{ fontSize: 19 }} />
-                    </IconButton>
-                  </Box>
-
-                  {/* Stats */}
-                  <Typography
-                    sx={{
-                      color: "#999",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {Math.floor(Math.random() * 100)} replies · {Math.floor(Math.random() * 1000)} likes
-                  </Typography>
                 </Box>
-              </Box>
 
-              {/* Menu */}
-              <Menu
-                anchorEl={anchorEl[post._id]}
-                open={Boolean(anchorEl[post._id])}
-                onClose={() => handleMenuClose(post._id)}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                PaperProps={{
-                  sx: {
-                    mt: 1,
-                    minWidth: 200,
-                    borderRadius: 3,
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-                    border: "1px solid #e5e5e5",
-                  },
-                }}
-              >
-                <MenuItem
-                  onClick={() => handleMenuClose(post._id)}
-                  sx={{
-                    py: 1.5,
-                    px: 2,
-                    fontSize: "15px",
-                    "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                {/* Menu */}
+                <Menu
+                  anchorEl={anchorEl[post._id]}
+                  open={Boolean(anchorEl[post._id])}
+                  onClose={() => handleMenuClose(post._id)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  PaperProps={{
+                    sx: {
+                      mt: 1,
+                      minWidth: 240,
+                      borderRadius: 3,
+                      bgcolor: "#ffffff",
+                      border: "1px solid #dbdbdb",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                    },
                   }}
                 >
-                  Save
-                </MenuItem>
-                <MenuItem
-                  onClick={() => handleMenuClose(post._id)}
-                  sx={{
-                    py: 1.5,
-                    px: 2,
-                    fontSize: "15px",
-                    "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                  }}
-                >
-                  Copy link
-                </MenuItem>
-                <MenuItem
-                  onClick={() => handleMenuClose(post._id)}
-                  sx={{
-                    py: 1.5,
-                    px: 2,
-                    fontSize: "15px",
-                    color: "#dc2626",
-                    "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                  }}
-                >
-                  Report
-                </MenuItem>
-              </Menu>
+                  <MenuItem
+                    onClick={() => handleMenuClose(post._id)}
+                    sx={{
+                      py: 1.75,
+                      px: 2.5,
+                      fontSize: "15px",
+                      color: "#000000",
+                      "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                    }}
+                  >
+                    Save
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => handleMenuClose(post._id)}
+                    sx={{
+                      py: 1.75,
+                      px: 2.5,
+                      fontSize: "15px",
+                      color: "#000000",
+                      "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                    }}
+                  >
+                    Copy link
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => handleMenuClose(post._id)}
+                    sx={{
+                      py: 1.75,
+                      px: 2.5,
+                      fontSize: "15px",
+                      color: "#000000",
+                      "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
+                    }}
+                  >
+                    Hide
+                  </MenuItem>
+                  <Divider sx={{ bgcolor: "#efefef", my: 0.5 }} />
+                  <MenuItem
+                    onClick={() => handleMenuClose(post._id)}
+                    sx={{
+                      py: 1.75,
+                      px: 2.5,
+                      fontSize: "15px",
+                      color: "#ed4956",
+                      "&:hover": { bgcolor: "rgba(237,73,86,0.05)" },
+                    }}
+                  >
+                    Report
+                  </MenuItem>
+                </Menu>
+              </Box>
             </Box>
 
+            {/* Divider between posts */}
             {index < posts.length - 1 && (
-              <Divider sx={{ borderColor: "#f0f0f0" }} />
+              <Divider sx={{ bgcolor: "#efefef" }} />
             )}
-          </React.Fragment>
+          </Box>
         ))}
       </Container>
     </Box>
