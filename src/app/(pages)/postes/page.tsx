@@ -22,11 +22,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { dispatchType, Statetype } from "@/redex/store";
 import { getAllPostes } from "@/redex/getAllPostes";
 import { useRouter } from "next/navigation";
+import ThreadsLoadingScreen from "@/app/ThreadsLoadingClient ";
 
-const ThreadsClone: React.FC = () => {
+ const  ThreadsClone: React.FC = () => {
   const router=useRouter();
   const dispatch = useDispatch<dispatchType>();
-  const { posts } = useSelector((state: Statetype) => state.allPostesReducer);
+  const { posts ,loading } = useSelector((state: Statetype) => state.allPostesReducer);
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl({ ...anchorEl, [postId]: event.currentTarget });
@@ -42,6 +43,7 @@ const ThreadsClone: React.FC = () => {
   useEffect(() => {
     dispatch(getAllPostes(50));
   }, [dispatch]);
+    if (loading) return <ThreadsLoadingScreen />;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

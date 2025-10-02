@@ -7,7 +7,9 @@ export default function ProfilePage() {
   const id = params?.id as string;
 
   return (
-
-
+    <div style={{ padding: 20 }}>
+      <h1>Profile Page</h1>
+      <p>User ID: {id}</p>
+    </div>
   );
 }
