@@ -17,45 +17,21 @@ import {
   Send,
   MoreHoriz,
   Verified,
+  Search,
+  Edit,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { dispatchType, Statetype } from "@/redex/store";
 import { getAllPostes } from "@/redex/getAllPostes";
 import { useRouter } from "next/navigation";
-import ThreadsLoadingScreen from "@/app/ThreadsLoadingClient ";
-
-
-// Types
-interface Comment {
-  _id: string;
-  content: string;
-  commentCreator: {
-    _id: string;
-    name: string;
-    photo: string;
-  };
-  post: string;
-  createdAt: string;
-}
-
-interface Post {
-  _id: string;
-  body: string;
-  image?: string;
-  user: {
-    _id: string;
-    name: string;
-    photo: string;
-  };
-  createdAt: string;
-  comments?: Comment[];
-}
+import ThreadsLoadingScreen from "@/app/ThreadsLoadingScreen";
 
 const ThreadsClone: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch<dispatchType>();
   const { posts, loading } = useSelector((state: Statetype) => state.allPostesReducer);
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
+  const [activeTab, setActiveTab] = useState('forYou');
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl({ ...anchorEl, [postId]: event.currentTarget });
@@ -68,11 +44,15 @@ const ThreadsClone: React.FC = () => {
   const handleProfile = (id: string) => {
     router.push(`/profile/${id}`);
   };
+  
+  const handleSinglePost = (id: string) => {
+    router.push(`/singlepost/${id}`);
+  };
 
   useEffect(() => {
-    dispatch(getAllPostes(50));
+    dispatch(getAllPostes(10));
   }, [dispatch]);
-
+  
   if (loading) return <ThreadsLoadingScreen />;
 
   const formatDate = (dateString: string) => {
@@ -90,443 +70,454 @@ const ThreadsClone: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        bgcolor: "#FAFAFA",
-        minHeight: "100vh",
-        pt: { xs: 0, md: 0 },
-        pb: { xs: 8, md: 2 },
-      }}
-    >
-      {/* Top Header - Home */}
+    <Box sx={{ bgcolor: "#ffffff", minHeight: "100vh" }}>
+      {/* Header */}
       <Box
         sx={{
           position: "sticky",
           top: 0,
-          bgcolor: "rgba(0,0,0,0.6)",
-          backdropFilter: "blur(12px)",
-          borderTop: "20px",
+          bgcolor: "#ffffff",
+          borderBottom: "1px solid #e5e5e5",
           zIndex: 100,
-          display: "flex",
-          justifyContent: "center",
-          py: 2,
         }}
       >
-        <Typography
+        <Container
+          maxWidth="sm"
           sx={{
-            fontWeight: 900,
-            fontSize: "16px",
-            color: "white",
-            letterSpacing: "-0.2px",
+            maxWidth: { xs: "100%", sm: 630 },
+            px: 2,
           }}
         >
-          Home
-        </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              height: 56,
+            }}
+          >
+            <IconButton sx={{ p: 1, color: "#000" }}>
+              <Search sx={{ fontSize: 22 }} />
+            </IconButton>
+
+            <Box sx={{ display: "flex", gap: 4 }}>
+              <Box
+                onClick={() => setActiveTab('forYou')}
+                sx={{
+                  position: "relative",
+                  pb: 1.5,
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: activeTab === 'forYou' ? "#000" : "#999",
+                  }}
+                >
+                  For you
+                </Typography>
+                {activeTab === 'forYou' && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 2,
+                      bgcolor: "#000",
+                      borderRadius: "4px",
+                    }}
+                  />
+                )}
+              </Box>
+
+              <Box
+                onClick={() => setActiveTab('following')}
+                sx={{
+                  position: "relative",
+                  pb: 1.5,
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: activeTab === 'following' ? "#000" : "#999",
+                  }}
+                >
+                  Following
+                </Typography>
+                {activeTab === 'following' && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 2,
+                      bgcolor: "#000",
+                      borderRadius: "4px",
+                    }}
+                  />
+                )}
+              </Box>
+            </Box>
+
+            <IconButton sx={{ p: 1, color: "#000" }}>
+              <Edit sx={{ fontSize: 22 }} />
+            </IconButton>
+          </Box>
+        </Container>
       </Box>
 
+      {/* Feed */}
       <Container
         maxWidth="sm"
         disableGutters
         sx={{
           maxWidth: { xs: "100%", sm: 630 },
-          bgcolor: "#ffffff",
-          borderRadius: "20px",
-          marginTop: "15px",
         }}
       >
         {posts?.map((post: Post, index: number) => (
           <Box key={post._id}>
             <Box
               sx={{
-                bgcolor: "#ffffff",
-                borderRadius: "20px",
-                transition: "background-color 0.15s ease",
+                px: 2,
+                py: 2,
                 cursor: "pointer",
-
+                transition: "background-color 0.15s ease",
+                "&:hover": {
+                  bgcolor: "#fafafa",
+                },
               }}
             >
-              <Box sx={{ px: 2, py: 2.5 }}>
-                <Box sx={{ display: "flex", gap: 1.5 }}>
-                  {/* Left side - Avatar */}
+              <Box sx={{ display: "flex", gap: 1.5 }}>
+                {/* Avatar with thread line */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar
+                    src={post.user.photo}
+                    alt={post.user.name}
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      bgcolor: "#e4e6eb",
+                      color: "#000",
+                      cursor: "pointer",
+                      border: "1px solid #e5e5e5",
+                    }}
+                    onClick={() => handleProfile(post.user._id)}
+                  >
+                    {post.user.name?.charAt(0).toUpperCase()}
+                  </Avatar>
+
+                  {/* Thread line and comment avatars */}
+                  {post.comments && post.comments.length > 0 && (
+                    <>
+                      <Box
+                        sx={{
+                          width: 2,
+                          bgcolor: "#e5e5e5",
+                          flex: 1,
+                          my: 1,
+                        }}
+                      />
+                      <Box sx={{ display: "flex", position: "relative" }}>
+                        {post.comments.slice(0, 2).map((comment, idx) => (
+                          <Avatar
+                            key={comment._id}
+                            src={comment.commentCreator.photo}
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              fontSize: "10px",
+                              fontWeight: 600,
+                              bgcolor: "#e4e6eb",
+                              color: "#000",
+                              border: "2px solid #fff",
+                              marginLeft: idx > 0 ? "-8px" : 0,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleProfile(comment.commentCreator._id)}
+                          >
+                            {comment.commentCreator.name?.charAt(0).toUpperCase()}
+                          </Avatar>
+                        ))}
+                        {post.comments.length > 2 && (
+                          <Avatar
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              fontSize: "9px",
+                              fontWeight: 700,
+                              bgcolor: "#e4e6eb",
+                              color: "#666",
+                              border: "2px solid #fff",
+                              marginLeft: "-8px",
+                            }}
+                          >
+                            +{post.comments.length - 2}
+                          </Avatar>
+                        )}
+                      </Box>
+                    </>
+                  )}
+                </Box>
+
+                {/* Content */}
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  {/* Header */}
                   <Box
                     sx={{
                       display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      mb: 0.5,
                     }}
                   >
-                    <Avatar
-                      src={post.user.photo}
-                      alt={post.user.name}
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        bgcolor: "#e4e6eb",
-                        color: "#000",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleProfile(post.user._id)}
-                    >
-                      {post.user.name?.charAt(0).toUpperCase()}
-                    </Avatar>
-                  </Box>
-
-                  {/* Right side - Content */}
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    {/* Header */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        justifyContent: "space-between",
-                        mb: 0.5,
-                      }}
-                    >
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                        <Typography
-                          sx={{
-                            fontWeight: 700,
-                            fontSize: "15px",
-                            color: "#000000",
-                            cursor: "pointer",
-                            "&:hover": {
-                              textDecoration: "underline",
-                            },
-                          }}
-                          onClick={() => handleProfile(post.user._id)}
-                        >
-                          {post.user.name}
-                        </Typography>
-                        <Verified sx={{ fontSize: 16, color: "#0095f6" }} />
-                      </Box>
-
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography
-                          sx={{
-                            color: "#999999",
-                            fontSize: "15px",
-                            fontWeight: 400,
-                          }}
-                        >
-                          {formatDate(post.createdAt)}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMenuOpen(e, post._id);
-                          }}
-                          sx={{
-                            color: "#999999",
-                            p: 0.5,
-                            "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
-                          }}
-                        >
-                          <MoreHoriz sx={{ fontSize: 20 }} />
-                        </IconButton>
-                      </Box>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: "15px",
+                          color: "#000000",
+                          cursor: "pointer",
+                          "&:hover": {
+                            textDecoration: "underline",
+                          },
+                        }}
+                        onClick={() => handleProfile(post.user._id)}
+                      >
+                        {post.user.name}
+                      </Typography>
+                      <Verified sx={{ fontSize: 14, color: "#0095f6" }} />
                     </Box>
 
-                    {/* Post Text */}
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        lineHeight: 1.4,
-                        color: "#000000",
-                        whiteSpace: "pre-wrap",
-                        wordBreak: "break-word",
-                        mb: post.image ? 1.25 : 1.5,
-                      }}
-                    >
-                      {post.body}
-                    </Typography>
-
-                    {/* Post Image */}
-                    {post.image && (
-                      <Box
-                        component="img"
-                        src={post.image}
-                        alt="Post"
-                        sx={{
-                          width: "100%",
-                          maxHeight: 500,
-                          objectFit: "cover",
-                          borderRadius: 2,
-                          border: "0.5px solid #dbdbdb",
-                          mb: 1.5,
-                        }}
-                      />
-                    )}
-
-                    {/* Action Buttons with Counts */}
-                    <Box sx={{ display: "flex", gap: 1.5, mb: 1.5 }}>
-                      {/* Like Button */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          cursor: "pointer",
-                          "&:hover .icon": {
-                            color: "#666666",
-                          },
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <FavoriteBorder 
-                          className="icon"
-                          sx={{ 
-                            fontSize: 20,
-                            color: "#000000",
-                            transition: "color 0.2s ease",
-                          }} 
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            fontWeight: 400,
-                            color: "#666666",
-                          }}
-                        >
-                          {Math.floor(Math.random() * 500)}
-                        </Typography>
-                      </Box>
-
-                      {/* Comment Button */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          cursor: "pointer",
-                          "&:hover .icon": {
-                            color: "#666666",
-                          },
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ChatBubbleOutline 
-                          className="icon"
-                          sx={{ 
-                            fontSize: 20,
-                            color: "#000000",
-                            transition: "color 0.2s ease",
-                          }} 
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            fontWeight: 400,
-                            color: "#666666",
-                          }}
-                        >
-                          {post.comments?.length || 0}
-                        </Typography>
-                      </Box>
-
-                      {/* Repost Button */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          cursor: "pointer",
-                          "&:hover .icon": {
-                            color: "#666666",
-                          },
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Repeat 
-                          className="icon"
-                          sx={{ 
-                            fontSize: 21,
-                            color: "#000000",
-                            transition: "color 0.2s ease",
-                          }} 
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            fontWeight: 400,
-                            color: "#666666",
-                          }}
-                        >
-                          {Math.floor(Math.random() * 50)}
-                        </Typography>
-                      </Box>
-
-                      {/* Send Button */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          cursor: "pointer",
-                          "&:hover .icon": {
-                            color: "#666666",
-                          },
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Send 
-                          className="icon"
-                          sx={{ 
-                            fontSize: 20,
-                            color: "#000000",
-                            transition: "color 0.2s ease",
-                          }} 
-                        />
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            fontWeight: 400,
-                            color: "#666666",
-                          }}
-                        >
-                          {Math.floor(Math.random() * 20)}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* Comments Section - Show first comment if exists */}
-                {post.comments && post.comments.length > 0 && (
-                  <Box sx={{ mt: 2 }}>
-                    {/* Avatars Row */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 0.5,
-                        mb: 1.5,
-                        pl: 0.5,
-                      }}
-                    >
-                      {/* Show up to 3 comment avatars stacked */}
-                      {post.comments.slice(0, 3).map((comment, idx) => (
-                        <Avatar
-                          key={comment._id}
-                          src={comment.commentCreator.photo}
-                          sx={{
-                            width: 20,
-                            height: 20,
-                            fontSize: "10px",
-                            fontWeight: 600,
-                            bgcolor: "#e4e6eb",
-                            color: "#000",
-                            border: "2px solid #fff",
-                            marginLeft: idx > 0 ? "-8px" : 0,
-                            cursor: "pointer",
-                            zIndex: 3 - idx,
-                          }}
-                          onClick={() => handleProfile(comment.commentCreator._id)}
-                        >
-                          {comment.commentCreator.name?.charAt(0).toUpperCase()}
-                        </Avatar>
-                      ))}
-                      
-                      {/* Replies count text */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                       <Typography
                         sx={{
                           color: "#999999",
                           fontSize: "15px",
                           fontWeight: 400,
-                          ml: 0.5,
+                        }}
+                      >
+                        {formatDate(post.createdAt)}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMenuOpen(e, post._id);
+                        }}
+                        sx={{
+                          color: "#666",
+                          p: 0.5,
+                          "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+                        }}
+                      >
+                        <MoreHoriz sx={{ fontSize: 20 }} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+
+                  {/* Post Text */}
+                  <Typography
+                    sx={{
+                      fontSize: "15px",
+                      lineHeight: 1.33,
+                      color: "#000000",
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      mb: post.image ? 1.5 : 1.5,
+                    }}
+                  >
+                    {post.body}
+                  </Typography>
+
+                  {/* Post Image */}
+                  {post.image && (
+                    <Box
+                      component="img"
+                      src={post.image}
+                      alt="Post"
+                      sx={{
+                        width: "100%",
+                        maxHeight: 500,
+                        objectFit: "cover",
+                        borderRadius: 3,
+                        border: "1px solid #e5e5e5",
+                        mb: 1.5,
+                      }}
+                    />
+                  )}
+
+                  {/* Action Buttons */}
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.75,
+                        cursor: "pointer",
+                        "&:hover .icon": {
+                          opacity: 0.6,
+                        },
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FavoriteBorder
+                        className="icon"
+                        sx={{
+                          fontSize: 20,
+                          color: "#000000",
+                          transition: "opacity 0.2s ease",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontWeight: 400,
+                          color: "#999999",
+                        }}
+                      >
+                        {Math.floor(Math.random() * 500)}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.75,
+                        cursor: "pointer",
+                        "&:hover .icon": {
+                          opacity: 0.6,
+                        },
+                      }}
+                      onClick={() => handleSinglePost(post._id)}
+                    >
+                      <ChatBubbleOutline
+                        className="icon"
+                        sx={{
+                          fontSize: 20,
+                          color: "#000000",
+                          transition: "opacity 0.2s ease",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontWeight: 400,
+                          color: "#999999",
+                        }}
+                      >
+                        {post.comments?.length || 0}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.75,
+                        cursor: "pointer",
+                        "&:hover .icon": {
+                          opacity: 0.6,
+                        },
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Repeat
+                        className="icon"
+                        sx={{
+                          fontSize: 20,
+                          color: "#000000",
+                          transition: "opacity 0.2s ease",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontWeight: 400,
+                          color: "#999999",
+                        }}
+                      >
+                        {Math.floor(Math.random() * 50)}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.75,
+                        cursor: "pointer",
+                        "&:hover .icon": {
+                          opacity: 0.6,
+                        },
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Send
+                        className="icon"
+                        sx={{
+                          fontSize: 20,
+                          color: "#000000",
+                          transition: "opacity 0.2s ease",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontWeight: 400,
+                          color: "#999999",
+                        }}
+                      >
+                        {Math.floor(Math.random() * 20)}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Comments Section */}
+                  {post.comments && post.comments.length > 0 && (
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          color: "#999999",
+                          mb: 1,
                         }}
                       >
                         {post.comments.length} {post.comments.length === 1 ? "reply" : "replies"}
                       </Typography>
-                    </Box>
 
-                    {/* First Comment Preview */}
-                    <Box
-                      sx={{
-                        bgcolor: "#fafafa",
-                        borderRadius: "16px",
-                        p: 2,
-                        cursor: "pointer",
-                        transition: "background-color 0.15s ease",
-                        "&:hover": {
-                          bgcolor: "#f5f5f5",
-                        },
-                      }}
-                    >
-                      <Box sx={{ display: "flex", gap: 1.5 }}>
-                        {/* Comment Avatar */}
-                        <Avatar
-                          src={post.comments[0].commentCreator.photo}
-                          sx={{
-                            width: 28,
-                            height: 28,
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            bgcolor: "#e4e6eb",
-                            color: "#000",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleProfile(post.comments[0].commentCreator._id)}
-                        >
-                          {post.comments[0].commentCreator.name?.charAt(0).toUpperCase()}
-                        </Avatar>
-
-                        {/* Comment Content */}
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.5 }}>
-                            <Typography
-                              sx={{
-                                fontWeight: 600,
-                                fontSize: "15px",
-                                color: "#000000",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  textDecoration: "underline",
-                                },
-                              }}
-                              onClick={() => handleProfile(post.comments[0].commentCreator._id)}
-                            >
-                              {post.comments[0].commentCreator.name}
-                            </Typography>
-                            <Typography
-                              sx={{
-                                color: "#999999",
-                                fontSize: "15px",
-                                fontWeight: 400,
-                              }}
-                            >
-                              {formatDate(post.comments[0].createdAt)}
-                            </Typography>
-                          </Box>
-                          <Typography
-                            sx={{
-                              fontSize: "15px",
-                              lineHeight: 1.4,
-                              color: "#000000",
-                              whiteSpace: "pre-wrap",
-                              wordBreak: "break-word",
-                            }}
-                          >
-                            {post.comments[0].content}
-                          </Typography>
-                        </Box>
-                      </Box>
-
-                      {/* "Add a topic" or "Reply to username" section */}
-                      {post.comments.length === 1 && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                            mt: 2,
-                            pt: 2,
-                            borderTop: "1px solid #e5e5e5",
-                          }}
-                        >
+                      {/* First Comment */}
+                      <Box
+                        sx={{
+                          bgcolor: "#fafafa",
+                          borderRadius: "16px",
+                          p: 1.5,
+                          cursor: "pointer",
+                          transition: "background-color 0.15s ease",
+                          "&:hover": {
+                            bgcolor: "#f5f5f5",
+                          },
+                        }}
+                        onClick={() => handleSinglePost(post._id)}
+                      >
+                        <Box sx={{ display: "flex", gap: 1 }}>
                           <Avatar
+                            src={post.comments[0].commentCreator.photo}
                             sx={{
                               width: 28,
                               height: 28,
@@ -534,24 +525,62 @@ const ThreadsClone: React.FC = () => {
                               fontWeight: 600,
                               bgcolor: "#e4e6eb",
                               color: "#000",
+                              cursor: "pointer",
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleProfile(post.comments[0].commentCreator._id);
                             }}
                           >
-                            {post.user.name?.charAt(0).toUpperCase()}
+                            {post.comments[0].commentCreator.name?.charAt(0).toUpperCase()}
                           </Avatar>
-                          <Typography
-                            sx={{
-                              color: "#999999",
-                              fontSize: "15px",
-                              fontWeight: 400,
-                            }}
-                          >
-                            Reply to {post.comments[0].commentCreator.name}...
-                          </Typography>
+
+                          <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 0.5 }}>
+                              <Typography
+                                sx={{
+                                  fontWeight: 600,
+                                  fontSize: "14px",
+                                  color: "#000000",
+                                  cursor: "pointer",
+                                  "&:hover": {
+                                    textDecoration: "underline",
+                                  },
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProfile(post.comments[0].commentCreator._id);
+                                }}
+                              >
+                                {post.comments[0].commentCreator.name}
+                              </Typography>
+                              <Typography
+                                sx={{
+                                  color: "#999999",
+                                  fontSize: "13px",
+                                  fontWeight: 400,
+                                }}
+                              >
+                                {formatDate(post.comments[0].createdAt)}
+                              </Typography>
+                            </Box>
+                            <Typography
+                              sx={{
+                                fontSize: "14px",
+                                lineHeight: 1.33,
+                                color: "#000000",
+                                whiteSpace: "pre-wrap",
+                                wordBreak: "break-word",
+                              }}
+                            >
+                              {post.comments[0].content}
+                            </Typography>
+                          </Box>
                         </Box>
-                      )}
+                      </Box>
                     </Box>
-                  </Box>
-                )}
+                  )}
+                </Box>
               </Box>
             </Box>
 
@@ -631,7 +660,7 @@ const ThreadsClone: React.FC = () => {
             </Menu>
 
             {/* Divider between posts */}
-            {index < posts.length - 1 && <Divider sx={{ bgcolor: "#efefef" }} />}
+            {index < posts.length - 1 && <Divider sx={{ bgcolor: "#f0f0f0" }} />}
           </Box>
         ))}
       </Container>

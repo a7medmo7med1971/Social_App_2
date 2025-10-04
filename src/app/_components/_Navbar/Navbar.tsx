@@ -3,13 +3,13 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Box,
-  Drawer,
+
   IconButton,
   Menu,
   MenuItem,
   Typography,
   Divider,
-  Avatar,
+
 } from "@mui/material";
 import {
   Home,
@@ -52,38 +52,6 @@ export default function ThreadsNavbar() {
 
   return (
     <>
-      {/* Top Header - Desktop & Mobile */}
-      {/* <Box
-        sx={{
-          position: "sticky",
-          top: 0,
-          bgcolor: "#ffffff",
-          borderBottom: "1px solid #e5e5e5",
-          zIndex: 1100,
-          display: { xs: "block", md: "none" },
-        }}
-      >
-        <Box
-          sx={{
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            px: 2,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              fontSize: "1rem",
-              letterSpacing: "0.5px",
-            }}
-          >
-            Home
-          </Typography>
-        </Box>
-      </Box> */}
 
       {/* Sidebar - Desktop Only */}
       <Box
@@ -137,7 +105,9 @@ export default function ThreadsNavbar() {
             flex: 1,
           }}
         >
+          <Link href="/postes">
           <IconButton
+              
             sx={{
               color: "#000",
               p: 1.5,
@@ -145,8 +115,9 @@ export default function ThreadsNavbar() {
               borderRadius: 2,
             }}
           >
-            <Home sx={{ fontSize: 28 }} />
+            <Home sx={{ fontSize: 28 }}  />
           </IconButton>
+          </Link>
           <IconButton
             sx={{
               color: "#000",
