@@ -192,7 +192,10 @@ const ThreadsClone: React.FC = () => {
                 "&:hover": {
                   bgcolor: "#fafafa",
                 },
+                
+
               }}
+               onClick={() => handleSinglePost(post._id)}
             >
               <Box sx={{ display: "flex", gap: 1.5 }}>
                 {/* Avatar with thread line */}
@@ -404,7 +407,7 @@ const ThreadsClone: React.FC = () => {
                           opacity: 0.6,
                         },
                       }}
-                      onClick={() => handleSinglePost(post._id)}
+                     
                     >
                       <ChatBubbleOutline
                         className="icon"
