@@ -148,6 +148,7 @@ export default function ThreadsNavbar() {
           >
             <Favorite sx={{ fontSize: 28 }} />
           </IconButton>
+          <Link href="\prsoinalprofile">
           <IconButton
             sx={{
               color: "#000",
@@ -156,8 +157,10 @@ export default function ThreadsNavbar() {
               borderRadius: 2,
             }}
           >
-            <AccountCircle sx={{ fontSize: 28 }} />
+            <AccountCircle sx={{ fontSize: 28 }}   />
+           
           </IconButton>
+          </Link>
         </Box>
 
         {/* Menu Button at Bottom */}

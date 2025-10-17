@@ -25,6 +25,7 @@ import { dispatchType, Statetype } from "@/redex/store";
 import { getAllPostes } from "@/redex/getAllPostes";
 import { useRouter } from "next/navigation";
 import ThreadsLoadingScreen from "@/app/ThreadsLoadingScreen";
+import CreatePost from "../(postes)/CreatePoste";
 
 const ThreadsClone: React.FC = () => {
   const router = useRouter();
@@ -180,7 +181,9 @@ const ThreadsClone: React.FC = () => {
         sx={{
           maxWidth: { xs: "100%", sm: 630 },
         }}
+      
       >
+        <CreatePost></CreatePost>
         {posts?.map((post: Post, index: number) => (
           <Box key={post._id}>
             <Box
@@ -192,10 +195,7 @@ const ThreadsClone: React.FC = () => {
                 "&:hover": {
                   bgcolor: "#fafafa",
                 },
-                
-
               }}
-               onClick={() => handleSinglePost(post._id)}
             >
               <Box sx={{ display: "flex", gap: 1.5 }}>
                 {/* Avatar with thread line */}
@@ -407,7 +407,7 @@ const ThreadsClone: React.FC = () => {
                           opacity: 0.6,
                         },
                       }}
-                     
+                      onClick={() => handleSinglePost(post._id)}
                     >
                       <ChatBubbleOutline
                         className="icon"
