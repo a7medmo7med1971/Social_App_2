@@ -42,9 +42,9 @@ const ThreadsClone: React.FC = () => {
     setAnchorEl({ ...anchorEl, [postId]: null });
   };
 
-  const handleProfile = (id: string) => {
-    router.push(`/profile/${id}`);
-  };
+  // const handleProfile = (id: string) => {
+  //   router.push(`/profile/${id}`);
+  // };
   
   const handleSinglePost = (id: string) => {
     router.push(`/singlepost/${id}`);
@@ -219,7 +219,7 @@ const ThreadsClone: React.FC = () => {
                       cursor: "pointer",
                       border: "1px solid #e5e5e5",
                     }}
-                    onClick={() => handleProfile(post.user._id)}
+                    // onClick={() => handleProfile(post.user._id)}
                   >
                     {post.user.name?.charAt(0).toUpperCase()}
                   </Avatar>
@@ -299,7 +299,7 @@ const ThreadsClone: React.FC = () => {
                             textDecoration: "underline",
                           },
                         }}
-                        onClick={() => handleProfile(post.user._id)}
+                        // onClick={() => handleProfile(post.user._id)}
                       >
                         {post.user.name}
                       </Typography>

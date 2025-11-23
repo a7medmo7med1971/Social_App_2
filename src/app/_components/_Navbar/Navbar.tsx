@@ -349,6 +349,21 @@ export default function ThreadsNavbar() {
         >
           <Favorite sx={{ fontSize: 28 }} />
         </IconButton>
+                  <Link href="\prsoinalprofile">
+          <IconButton
+            sx={{
+              color: "#000",
+              p: 1.5,
+              "&:hover": { bgcolor: "rgba(0,0,0,0.05)" },
+              borderRadius: 2,
+            }}
+          >
+            <AccountCircle sx={{ fontSize: 28 }}   />
+           
+          </IconButton>
+          </Link>
+      
+        
         <IconButton
           onClick={handleMenuOpen}
           sx={{
@@ -359,6 +374,7 @@ export default function ThreadsNavbar() {
         >
           <MenuIcon sx={{ fontSize: 28 }} />
         </IconButton>
+        
       </Box>
 
       {/* Add padding to main content to account for sidebar */}
