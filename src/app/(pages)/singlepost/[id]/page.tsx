@@ -153,7 +153,7 @@ export default function Singlepost() {
                   cursor: "pointer",
                   border: "1px solid #e5e5e5",
                 }}
-                onClick={() => handleProfile(post?.user._id)}
+                onClick={() => post?.user?._id && handleProfile(post.user._id)}
               >
                 {post?.user?.name?.charAt(0).toUpperCase()}
               </Avatar>
@@ -194,7 +194,7 @@ export default function Singlepost() {
                         textDecoration: "underline",
                       },
                     }}
-                    onClick={() => handleProfile(post?.user._id)}
+                  onClick={() => post?.user?._id && handleProfile(post.user._id)}
                   >
                     {post?.user?.name}
                   </Typography>
