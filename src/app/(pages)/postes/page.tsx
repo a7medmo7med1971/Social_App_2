@@ -33,6 +33,7 @@ const ThreadsClone: React.FC = () => {
   const { posts, loading } = useSelector((state: Statetype) => state.allPostesReducer);
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
   const [activeTab, setActiveTab] = useState('forYou');
+
   interface Post {
   _id: string;
   body: string;
@@ -264,7 +265,7 @@ const ThreadsClone: React.FC = () => {
                               marginLeft: idx > 0 ? "-8px" : 0,
                               cursor: "pointer",
                             }}
-                            onClick={() => handleProfile(comment.commentCreator._id)}
+                            // onClick={() => handleProfile(comment.commentCreator._id)}
                           >
                             {comment.commentCreator.name?.charAt(0).toUpperCase()}
                           </Avatar>
@@ -545,7 +546,7 @@ const ThreadsClone: React.FC = () => {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleProfile(post.comments[0].commentCreator._id);
+                              // handleProfile(post.comments[0].commentCreator._id);
                             }}
                           >
                             {post.comments[0].commentCreator.name?.charAt(0).toUpperCase()}
@@ -565,7 +566,7 @@ const ThreadsClone: React.FC = () => {
                                 }}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleProfile(post.comments[0].commentCreator._id);
+                                  // handleProfile(post.comments[0].commentCreator._id);
                                 }}
                               >
                                 {post.comments[0].commentCreator.name}
