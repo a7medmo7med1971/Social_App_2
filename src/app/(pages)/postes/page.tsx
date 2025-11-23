@@ -33,6 +33,19 @@ const ThreadsClone: React.FC = () => {
   const { posts, loading } = useSelector((state: Statetype) => state.allPostesReducer);
   const [anchorEl, setAnchorEl] = useState<{ [key: string]: HTMLElement | null }>({});
   const [activeTab, setActiveTab] = useState('forYou');
+  interface Post {
+  _id: string;
+  body: string;
+  image?: string;
+  createdAt: string;
+  comments: any[];
+  user: {
+    _id: string;
+    name: string;
+    photo: string;
+  };
+}
+
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl({ ...anchorEl, [postId]: event.currentTarget });
