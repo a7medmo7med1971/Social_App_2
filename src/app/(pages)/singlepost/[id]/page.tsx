@@ -209,7 +209,7 @@ export default function Singlepost() {
                       fontWeight: 400,
                     }}
                   >
-                    {formatDate(post?.createdAt)}
+                    {post?.createdAt && formatDate(post.createdAt)}
                   </Typography>
                   <IconButton
                     size="small"
