@@ -1,18 +1,28 @@
-// postsSlice.ts
+// src/redex/getSinglePost.tsx
+
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+// IMPORT IPost
+import { IPost } from "@/typs/IPost";
 
 /* ----------  الـ Thunk ---------- */
-const token =  Cookies.get('token');
+const token = Cookies.get("token");
+
 export const getSinglePost = createAsyncThunk<{ post: IPost }, string>(
   "getSinglePost/getSinglePost",
   async (id: string) => {
-    const res = await axios.get(`https://linked-posts.routemisr.com/posts/${id}`,{headers:{
-      token:token
-    }});
-    return res.data; // بيرجع {post: {...}}
+    const res = await axios.get(
+      `https://linked-posts.routemisr.com/posts/${id}`,
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+
+    return res.data; // {post: {...}}
   }
 );
 
@@ -27,7 +37,7 @@ const initialState: SinglePostState = {
   post: null,
 };
 
-/* ----------  الـ Slice ---------- */
+/* --------الـ Slice ---------- */
 export const SinglePost = createSlice({
   name: "SinglePost",
   initialState,
